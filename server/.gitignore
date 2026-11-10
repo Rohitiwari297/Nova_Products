@@ -1,0 +1,67 @@
+# ==========================================
+# Nova Beauty - .gitignore
+# ==========================================
+
+# Dependency Directories
+node_modules/
+jspm_packages/
+web_modules/
+
+# Environment Variables & Secrets (CRITICAL: Do NOT commit to GitHub)
+.env
+.env.local
+.env.*.local
+.env.development
+.env.test
+.env.production
+!.env.example
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+pnpm-debug.log*
+
+# Runtime data & Database dumps
+pids/
+*.pid
+*.seed
+*.pid.lock
+*.sql
+*.sqlite
+
+# Testing & Coverage
+coverage/
+*.lcov
+.nyc_output/
+
+# Build & Cache Directories
+dist/
+build/
+.cache/
+.parcel-cache/
+.eslintcache/
+
+# OS-generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE / Code Editor Files
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
