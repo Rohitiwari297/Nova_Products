@@ -91,7 +91,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"Priya Sharma\",\n  \"email\": \"priya.sharma@example.com\",\n  \"phone\": \"9876543210\",\n  \"password\": \"Priya@123\",\n  \"city\": \"Delhi\"\n}"
+							"raw": "{\n  \"name\": \"Priya Sharma\",\n  \"email\": \"priya.sharma@example.com\",\n  \"phone\": \"9876543210\",\n  \"password\": \"Priya@123\",\n  \"city\": \"Lucknow\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/auth/register",
@@ -213,10 +213,10 @@
 			]
 		},
 		{
-			"name": "2. Discovery & Catalog (Roadmap)",
+			"name": "2. Discovery & Catalog (Live)",
 			"item": [
 				{
-					"name": "Get Operational Cities",
+					"name": "1. Get Operational Cities",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -231,17 +231,17 @@
 								"cities"
 							]
 						},
-						"description": "Get all cities where Nova Beauty operates."
+						"description": "Returns list of all active serviceable cities (e.g. Lucknow, Ahmedabad, Bhind, Etawah) for city selector dropdown."
 					},
 					"response": []
 				},
 				{
-					"name": "Get Banners",
+					"name": "2. Get Promotional Banners",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/api/v1/banners?city=Delhi",
+							"raw": "{{baseUrl}}/api/v1/banners?city=Lucknow",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -253,21 +253,22 @@
 							"query": [
 								{
 									"key": "city",
-									"value": "Delhi"
+									"value": "Lucknow",
+									"description": "Optional city filter"
 								}
 							]
 						},
-						"description": "Promotional homepage sliders and banners."
+						"description": "Returns active marketing and hero slider banners for the homepage."
 					},
 					"response": []
 				},
 				{
-					"name": "Get Categories",
+					"name": "3. Get Categories",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/api/v1/categories?city=Delhi",
+							"raw": "{{baseUrl}}/api/v1/categories?city=Lucknow",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -279,21 +280,22 @@
 							"query": [
 								{
 									"key": "city",
-									"value": "Delhi"
+									"value": "Lucknow",
+									"description": "Optional city filter"
 								}
 							]
 						},
-						"description": "List all service categories (Waxing, Facial, Hair, Makeup)."
+						"description": "Returns all 14 beauty service categories (WAXING, FACIAL, MANI-PEDI, MAKE-UP, CLEAN-UP, etc.) with icons/images."
 					},
 					"response": []
 				},
 				{
-					"name": "Get Services List",
+					"name": "4. Get Services List (With Filters)",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/api/v1/services?category=Facial&city=Delhi",
+							"raw": "{{baseUrl}}/api/v1/services?category=FACIAL&city=Lucknow&page=1&limit=10",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -305,15 +307,54 @@
 							"query": [
 								{
 									"key": "category",
-									"value": "Facial"
+									"value": "FACIAL",
+									"description": "Filter by category name (e.g. FACIAL, WAXING, CLEAN-UP)"
 								},
 								{
 									"key": "city",
-									"value": "Delhi"
+									"value": "Lucknow",
+									"description": "Filter by target city"
+								},
+								{
+									"key": "search",
+									"value": "",
+									"description": "Search keyword (e.g. gold, haircut, facial)",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number (default 1)"
+								},
+								{
+									"key": "limit",
+									"value": "10",
+									"description": "Results per page (default 20)"
 								}
 							]
 						},
-						"description": "List services with pricing, duration, and discounts."
+						"description": "Fetch beauty services with pagination, category filter, city filter, and text search. Includes parsed `included_list` and `experts_list`."
+					},
+					"response": []
+				},
+				{
+					"name": "5. Get Single Service by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/services/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"services",
+								"1"
+							]
+						},
+						"description": "Fetch detailed information for a single service (price, duration, about, included items, expert qualities, offer percentage)."
 					},
 					"response": []
 				}
@@ -333,7 +374,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/api/v1/bookings/available-slots?date=2026-11-20&city=Delhi",
+							"raw": "{{baseUrl}}/api/v1/bookings/available-slots?date=2026-11-20&city=Lucknow",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -350,7 +391,7 @@
 								},
 								{
 									"key": "city",
-									"value": "Delhi"
+									"value": "Lucknow"
 								}
 							]
 						},
@@ -408,7 +449,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"address_id\": 1,\n  \"booking_date\": \"2026-11-20\",\n  \"booking_time\": \"11:00:00\",\n  \"services\": [\n    {\n      \"service_id\": 5,\n      \"quantity\": 1\n    }\n  ],\n  \"coupon_code\": \"NOVA100\",\n  \"payment_method\": \"cod\"\n}"
+							"raw": "{\n  \"address_id\": 1,\n  \"booking_date\": \"2026-11-20\",\n  \"booking_time\": \"11:00:00\",\n  \"services\": [\n    {\n      \"service_id\": 1,\n      \"quantity\": 1\n    }\n  ],\n  \"coupon_code\": \"NOVA100\",\n  \"payment_method\": \"cod\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/appointments",

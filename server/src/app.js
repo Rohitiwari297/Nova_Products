@@ -3,6 +3,7 @@ import cors from "cors";
 import { connectDB } from "./config/db_conn.js";
 import { config } from "./config/config.js";
 import authRouter from "./modules/auth/auth.router.js";
+import catalogRouter from "./modules/catalog/catalog.router.js";
 
 const app = express();
 
@@ -34,6 +35,9 @@ app.get("/api/v1/health", (req, res) => {
 
 // Auth Routes mount karein
 app.use("/api/v1/auth", authRouter);
+
+// Catalog & Services Routes mount karein
+app.use("/api/v1", catalogRouter);
 
 // 404 Handler
 app.use((req, res) => {
