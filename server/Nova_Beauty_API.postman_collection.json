@@ -1,0 +1,431 @@
+{
+	"info": {
+		"_postman_id": "b3e047f1-8f56-4cf7-9a88-nova-beauty-api-2026",
+		"name": "Nova Beauty API Collection",
+		"description": "Complete REST API collection for Nova Beauty On-Demand Home Salon & Doorstep Beauty Services.\n\nLive Base URL: `http://200.141.4.67`",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://200.141.4.67",
+			"type": "string"
+		},
+		{
+			"key": "authToken",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "0. Health & System",
+			"item": [
+				{
+					"name": "API Root / Status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								""
+							]
+						},
+						"description": "Returns basic API information, status, and version."
+					},
+					"response": []
+				},
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/health",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"health"
+							]
+						},
+						"description": "Health check endpoint returning system status and timestamp."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "1. Authentication",
+			"item": [
+				{
+					"name": "Customer Register",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.token) {",
+									"    pm.collectionVariables.set('authToken', jsonData.token);",
+									"    console.log('authToken saved successfully:', jsonData.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Priya Sharma\",\n  \"email\": \"priya.sharma@example.com\",\n  \"phone\": \"9876543210\",\n  \"password\": \"Priya@123\",\n  \"city\": \"Delhi\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/auth/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"register"
+							]
+						},
+						"description": "Register a new customer account. Returns user profile and JWT token (which is auto-saved in collection variable `authToken`)."
+					},
+					"response": []
+				},
+				{
+					"name": "Customer Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.token) {",
+									"    pm.collectionVariables.set('authToken', jsonData.token);",
+									"    console.log('authToken saved successfully:', jsonData.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"priya.sharma@example.com\",\n  \"password\": \"Priya@123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"login"
+							]
+						},
+						"description": "Login using email and password. Returns JWT token (auto-saved to `authToken`)."
+					},
+					"response": []
+				},
+				{
+					"name": "Customer Logout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/auth/logout",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"logout"
+							]
+						},
+						"description": "Logs out customer and instructs client to clear stored JWT."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Current User Profile (Me)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/auth/me",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"me"
+							]
+						},
+						"description": "Fetch current logged-in user profile, wallet balance, and status."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "2. Discovery & Catalog (Roadmap)",
+			"item": [
+				{
+					"name": "Get Operational Cities",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/cities",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"cities"
+							]
+						},
+						"description": "Get all cities where Nova Beauty operates."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Banners",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/banners?city=Delhi",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"banners"
+							],
+							"query": [
+								{
+									"key": "city",
+									"value": "Delhi"
+								}
+							]
+						},
+						"description": "Promotional homepage sliders and banners."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Categories",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/categories?city=Delhi",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"categories"
+							],
+							"query": [
+								{
+									"key": "city",
+									"value": "Delhi"
+								}
+							]
+						},
+						"description": "List all service categories (Waxing, Facial, Hair, Makeup)."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Services List",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/services?category=Facial&city=Delhi",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"services"
+							],
+							"query": [
+								{
+									"key": "category",
+									"value": "Facial"
+								},
+								{
+									"key": "city",
+									"value": "Delhi"
+								}
+							]
+						},
+						"description": "List services with pricing, duration, and discounts."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "3. Booking & Checkout (Roadmap)",
+			"item": [
+				{
+					"name": "Check Available Time Slots",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/bookings/available-slots?date=2026-11-20&city=Delhi",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"bookings",
+								"available-slots"
+							],
+							"query": [
+								{
+									"key": "date",
+									"value": "2026-11-20"
+								},
+								{
+									"key": "city",
+									"value": "Delhi"
+								}
+							]
+						},
+						"description": "Check available beautician slots for chosen date."
+					},
+					"response": []
+				},
+				{
+					"name": "Apply Coupon",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"coupon_code\": \"NOVA100\",\n  \"cart_total\": 999\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/coupons/apply",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"coupons",
+								"apply"
+							]
+						},
+						"description": "Validates coupon and returns discount."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Appointment",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"address_id\": 1,\n  \"booking_date\": \"2026-11-20\",\n  \"booking_time\": \"11:00:00\",\n  \"services\": [\n    {\n      \"service_id\": 5,\n      \"quantity\": 1\n    }\n  ],\n  \"coupon_code\": \"NOVA100\",\n  \"payment_method\": \"cod\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/appointments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"appointments"
+							]
+						},
+						"description": "Book a doorstep beauty service appointment."
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
