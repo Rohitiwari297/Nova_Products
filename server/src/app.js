@@ -23,7 +23,7 @@ app.use(express.urlencoded({ extended: true }));
 app.get("/", (req, res) => {
     res.json({
         success: true,
-        message: "🌸 Nova Beauty Backend API is running successfully!",
+        message: "Nova Beauty Backend API is running successfully!",
         version: "1.0.0"
     });
 });
