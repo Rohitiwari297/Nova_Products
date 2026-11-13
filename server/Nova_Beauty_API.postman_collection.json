@@ -15,6 +15,11 @@
 			"key": "authToken",
 			"value": "",
 			"type": "string"
+		},
+		{
+			"key": "addressId",
+			"value": "1",
+			"type": "string"
 		}
 	],
 	"item": [
@@ -105,7 +110,7 @@
 								"register"
 							]
 						},
-						"description": "Register a new customer account. Returns user profile and JWT token (which is auto-saved in collection variable `authToken`)."
+						"description": "Register a new customer account. Returns user profile and JWT token (auto-saved in `authToken`)."
 					},
 					"response": []
 				},
@@ -231,7 +236,7 @@
 								"cities"
 							]
 						},
-						"description": "Returns list of all active serviceable cities (e.g. Lucknow, Ahmedabad, Bhind, Etawah) for city selector dropdown."
+						"description": "Returns list of all active serviceable cities (Lucknow, Ahmedabad, Bhind, Etawah, Meerut)."
 					},
 					"response": []
 				},
@@ -253,12 +258,11 @@
 							"query": [
 								{
 									"key": "city",
-									"value": "Lucknow",
-									"description": "Optional city filter"
+									"value": "Lucknow"
 								}
 							]
 						},
-						"description": "Returns active marketing and hero slider banners for the homepage."
+						"description": "Returns active marketing and hero slider banners."
 					},
 					"response": []
 				},
@@ -280,12 +284,11 @@
 							"query": [
 								{
 									"key": "city",
-									"value": "Lucknow",
-									"description": "Optional city filter"
+									"value": "Lucknow"
 								}
 							]
 						},
-						"description": "Returns all 14 beauty service categories (WAXING, FACIAL, MANI-PEDI, MAKE-UP, CLEAN-UP, etc.) with icons/images."
+						"description": "Returns all 14 beauty service categories (WAXING, FACIAL, MANI-PEDI, MAKE-UP, CLEAN-UP, etc.)."
 					},
 					"response": []
 				},
@@ -295,7 +298,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/api/v1/services?category=FACIAL&city=Lucknow&page=1&limit=10",
+							"raw": "{{baseUrl}}/api/v1/services?category=WAXING&city=Lucknow&page=1&limit=10",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -307,33 +310,28 @@
 							"query": [
 								{
 									"key": "category",
-									"value": "FACIAL",
-									"description": "Filter by category name (e.g. FACIAL, WAXING, CLEAN-UP)"
+									"value": "WAXING"
 								},
 								{
 									"key": "city",
-									"value": "Lucknow",
-									"description": "Filter by target city"
+									"value": "Lucknow"
 								},
 								{
 									"key": "search",
 									"value": "",
-									"description": "Search keyword (e.g. gold, haircut, facial)",
 									"disabled": true
 								},
 								{
 									"key": "page",
-									"value": "1",
-									"description": "Page number (default 1)"
+									"value": "1"
 								},
 								{
 									"key": "limit",
-									"value": "10",
-									"description": "Results per page (default 20)"
+									"value": "10"
 								}
 							]
 						},
-						"description": "Fetch beauty services with pagination, category filter, city filter, and text search. Includes parsed `included_list` and `experts_list`."
+						"description": "Fetch beauty services with pagination, category filter, city filter, and text search."
 					},
 					"response": []
 				},
@@ -343,7 +341,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/api/v1/services/1",
+							"raw": "{{baseUrl}}/api/v1/services/2",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -351,17 +349,159 @@
 								"api",
 								"v1",
 								"services",
-								"1"
+								"2"
 							]
 						},
-						"description": "Fetch detailed information for a single service (price, duration, about, included items, expert qualities, offer percentage)."
+						"description": "Fetch detailed information for a single service (price, duration, about, included items, expert qualities)."
 					},
 					"response": []
 				}
 			]
 		},
 		{
-			"name": "3. Booking & Checkout (Roadmap)",
+			"name": "3. Customer Addresses (Live)",
+			"item": [
+				{
+					"name": "1. Get User Saved Addresses",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/user/addresses",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"addresses"
+							]
+						},
+						"description": "Get all doorstep delivery/service addresses saved by the logged-in customer."
+					},
+					"response": []
+				},
+				{
+					"name": "2. Add New Saved Address",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.address && jsonData.address.id) {",
+									"    pm.collectionVariables.set('addressId', jsonData.address.id.toString());",
+									"    console.log('addressId saved:', jsonData.address.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"full_address\": \"Flat 402, Royal Palms, Gomti Nagar\",\n  \"city\": \"Lucknow\",\n  \"landmark\": \"Near City Mall\",\n  \"lat\": 26.8467,\n  \"lng\": 80.9462,\n  \"label\": \"Home\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/user/addresses",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"addresses"
+							]
+						},
+						"description": "Add a new doorstep address. Auto-saves the returned ID to `{{addressId}}`."
+					},
+					"response": []
+				},
+				{
+					"name": "3. Update Saved Address",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"full_address\": \"Flat 402, Royal Palms, Gomti Nagar, Phase 2\",\n  \"city\": \"Lucknow\",\n  \"landmark\": \"Opposite City Mall\",\n  \"lat\": 26.8467,\n  \"lng\": 80.9462,\n  \"label\": \"Home\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/user/addresses/{{addressId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"addresses",
+								"{{addressId}}"
+							]
+						},
+						"description": "Update an existing saved address by ID."
+					},
+					"response": []
+				},
+				{
+					"name": "4. Delete Saved Address",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/user/addresses/{{addressId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"addresses",
+								"{{addressId}}"
+							]
+						},
+						"description": "Delete a saved address by ID."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "4. Booking & Checkout (Roadmap)",
 			"item": [
 				{
 					"name": "Check Available Time Slots",
@@ -449,7 +589,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"address_id\": 1,\n  \"booking_date\": \"2026-11-20\",\n  \"booking_time\": \"11:00:00\",\n  \"services\": [\n    {\n      \"service_id\": 1,\n      \"quantity\": 1\n    }\n  ],\n  \"coupon_code\": \"NOVA100\",\n  \"payment_method\": \"cod\"\n}"
+							"raw": "{\n  \"address_id\": {{addressId}},\n  \"booking_date\": \"2026-11-20\",\n  \"booking_time\": \"11:00:00\",\n  \"services\": [\n    {\n      \"service_id\": 2,\n      \"quantity\": 1\n    }\n  ],\n  \"coupon_code\": \"NOVA100\",\n  \"payment_method\": \"cod\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/appointments",
@@ -462,7 +602,7 @@
 								"appointments"
 							]
 						},
-						"description": "Book a doorstep beauty service appointment."
+						"description": "Book a doorstep beauty service appointment using the saved address."
 					},
 					"response": []
 				}
