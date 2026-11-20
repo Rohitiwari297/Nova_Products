@@ -20,6 +20,11 @@
 			"key": "addressId",
 			"value": "1",
 			"type": "string"
+		},
+		{
+			"key": "bookingId",
+			"value": "ORD-0171E4",
+			"type": "string"
 		}
 	],
 	"item": [
@@ -432,7 +437,7 @@
 								"addresses"
 							]
 						},
-						"description": "Add a new doorstep address. Auto-saves the returned ID to `{{addressId}}`."
+						"description": "Add a new doorstep address. Auto-saves returned ID to `{{addressId}}`."
 					},
 					"response": []
 				},
@@ -501,20 +506,15 @@
 			]
 		},
 		{
-			"name": "4. Booking & Checkout (Roadmap)",
+			"name": "4. Bookings & Appointments (Live)",
 			"item": [
 				{
-					"name": "Check Available Time Slots",
+					"name": "1. Check Available Time Slots",
 					"request": {
 						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{authToken}}"
-							}
-						],
+						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/api/v1/bookings/available-slots?date=2026-11-20&city=Lucknow",
+							"raw": "{{baseUrl}}/api/v1/bookings/available-slots?date=2026-11-25&city=Lucknow",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -527,35 +527,33 @@
 							"query": [
 								{
 									"key": "date",
-									"value": "2026-11-20"
+									"value": "2026-11-25",
+									"description": "Date in YYYY-MM-DD"
 								},
 								{
 									"key": "city",
-									"value": "Lucknow"
+									"value": "Lucknow",
+									"description": "Target city name"
 								}
 							]
 						},
-						"description": "Check available beautician slots for chosen date."
+						"description": "Check available beautician time slots for chosen date and city."
 					},
 					"response": []
 				},
 				{
-					"name": "Apply Coupon",
+					"name": "2. Apply Coupon Code",
 					"request": {
 						"method": "POST",
 						"header": [
 							{
 								"key": "Content-Type",
 								"value": "application/json"
-							},
-							{
-								"key": "Authorization",
-								"value": "Bearer {{authToken}}"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"coupon_code\": \"NOVA100\",\n  \"cart_total\": 999\n}"
+							"raw": "{\n  \"coupon_code\": \"FIRST ORDER\",\n  \"cart_total\": 1200,\n  \"city\": \"Lucknow\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/coupons/apply",
@@ -569,12 +567,27 @@
 								"apply"
 							]
 						},
-						"description": "Validates coupon and returns discount."
+						"description": "Validates coupon from `vendor_coupons` table, checks minimum order amount, and calculates discount amount."
 					},
 					"response": []
 				},
 				{
-					"name": "Create Appointment",
+					"name": "3. Book Appointment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.booking && jsonData.booking.booking_id) {",
+									"    pm.collectionVariables.set('bookingId', jsonData.booking.booking_id);",
+									"    console.log('bookingId saved:', jsonData.booking.booking_id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -589,7 +602,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"address_id\": {{addressId}},\n  \"booking_date\": \"2026-11-20\",\n  \"booking_time\": \"11:00:00\",\n  \"services\": [\n    {\n      \"service_id\": 2,\n      \"quantity\": 1\n    }\n  ],\n  \"coupon_code\": \"NOVA100\",\n  \"payment_method\": \"cod\"\n}"
+							"raw": "{\n  \"address_id\": {{addressId}},\n  \"booking_date\": \"2026-11-25\",\n  \"booking_time\": \"11:00:00\",\n  \"services\": [\n    {\n      \"service_id\": 1,\n      \"quantity\": 1\n    },\n    {\n      \"service_id\": 2,\n      \"quantity\": 1\n    }\n  ],\n  \"coupon_code\": \"FIRST ORDER\",\n  \"payment_method\": \"Cash on Delivery\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/v1/appointments",
@@ -602,7 +615,65 @@
 								"appointments"
 							]
 						},
-						"description": "Book a doorstep beauty service appointment using the saved address."
+						"description": "Create a new doorstep salon appointment. Generates unique booking ID (`ORD-XXXXXX`) and 6-digit service OTP. Auto-saves `booking_id` to `{{bookingId}}`."
+					},
+					"response": []
+				},
+				{
+					"name": "4. Get My Appointments",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/appointments?status=upcoming",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"appointments"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "upcoming",
+									"description": "Filter by upcoming, completed, or cancelled (optional)"
+								}
+							]
+						},
+						"description": "List all appointments booked by the logged-in customer."
+					},
+					"response": []
+				},
+				{
+					"name": "5. Get Single Appointment Details",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/appointments/{{bookingId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"appointments",
+								"{{bookingId}}"
+							]
+						},
+						"description": "Fetch detailed invoice and status for a specific booking by ID or `booking_id`."
 					},
 					"response": []
 				}

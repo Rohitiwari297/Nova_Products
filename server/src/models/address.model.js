@@ -48,3 +48,4 @@ export const AddressModel = {
         return result.affectedRows > 0;
     }
 };
+

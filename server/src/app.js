@@ -5,6 +5,7 @@ import { config } from "./config/config.js";
 import authRouter from "./modules/auth/auth.router.js";
 import catalogRouter from "./modules/catalog/catalog.router.js";
 import addressRouter from "./modules/address/address.router.js";
+import bookingRouter from "./modules/booking/booking.router.js";
 
 const app = express();
 
@@ -42,6 +43,9 @@ app.use("/api/v1", catalogRouter);
 
 // Customer Saved Addresses Routes mount karein
 app.use("/api/v1/user/addresses", addressRouter);
+
+// Booking, Coupon & Appointment Routes mount karein
+app.use("/api/v1", bookingRouter);
 
 // 404 Handler
 app.use((req, res) => {
