@@ -1,683 +1,904 @@
 {
-	"info": {
-		"_postman_id": "b3e047f1-8f56-4cf7-9a88-nova-beauty-api-2026",
-		"name": "Nova Beauty API Collection",
-		"description": "Complete REST API collection for Nova Beauty On-Demand Home Salon & Doorstep Beauty Services.\n\nLive Base URL: `http://200.141.4.67`",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-	},
-	"variable": [
-		{
-			"key": "baseUrl",
-			"value": "http://200.141.4.67",
-			"type": "string"
-		},
-		{
-			"key": "authToken",
-			"value": "",
-			"type": "string"
-		},
-		{
-			"key": "addressId",
-			"value": "1",
-			"type": "string"
-		},
-		{
-			"key": "bookingId",
-			"value": "ORD-0171E4",
-			"type": "string"
-		}
-	],
-	"item": [
-		{
-			"name": "0. Health & System",
-			"item": [
-				{
-					"name": "API Root / Status",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								""
-							]
-						},
-						"description": "Returns basic API information, status, and version."
-					},
-					"response": []
-				},
-				{
-					"name": "Health Check",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/health",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"health"
-							]
-						},
-						"description": "Health check endpoint returning system status and timestamp."
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "1. Authentication",
-			"item": [
-				{
-					"name": "Customer Register",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"var jsonData = pm.response.json();",
-									"if (jsonData.token) {",
-									"    pm.collectionVariables.set('authToken', jsonData.token);",
-									"    console.log('authToken saved successfully:', jsonData.token);",
-									"}"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"name\": \"Priya Sharma\",\n  \"email\": \"priya.sharma@example.com\",\n  \"phone\": \"9876543210\",\n  \"password\": \"Priya@123\",\n  \"city\": \"Lucknow\"\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/auth/register",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"auth",
-								"register"
-							]
-						},
-						"description": "Register a new customer account. Returns user profile and JWT token (auto-saved in `authToken`)."
-					},
-					"response": []
-				},
-				{
-					"name": "Customer Login",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"var jsonData = pm.response.json();",
-									"if (jsonData.token) {",
-									"    pm.collectionVariables.set('authToken', jsonData.token);",
-									"    console.log('authToken saved successfully:', jsonData.token);",
-									"}"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"email\": \"priya.sharma@example.com\",\n  \"password\": \"Priya@123\"\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/auth/login",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"auth",
-								"login"
-							]
-						},
-						"description": "Login using email and password. Returns JWT token (auto-saved to `authToken`)."
-					},
-					"response": []
-				},
-				{
-					"name": "Customer Logout",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Authorization",
-								"value": "Bearer {{authToken}}"
-							}
-						],
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/auth/logout",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"auth",
-								"logout"
-							]
-						},
-						"description": "Logs out customer and instructs client to clear stored JWT."
-					},
-					"response": []
-				},
-				{
-					"name": "Get Current User Profile (Me)",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{authToken}}"
-							}
-						],
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/auth/me",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"auth",
-								"me"
-							]
-						},
-						"description": "Fetch current logged-in user profile, wallet balance, and status."
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "2. Discovery & Catalog (Live)",
-			"item": [
-				{
-					"name": "1. Get Operational Cities",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/cities",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"cities"
-							]
-						},
-						"description": "Returns list of all active serviceable cities (Lucknow, Ahmedabad, Bhind, Etawah, Meerut)."
-					},
-					"response": []
-				},
-				{
-					"name": "2. Get Promotional Banners",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/banners?city=Lucknow",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"banners"
-							],
-							"query": [
-								{
-									"key": "city",
-									"value": "Lucknow"
-								}
-							]
-						},
-						"description": "Returns active marketing and hero slider banners."
-					},
-					"response": []
-				},
-				{
-					"name": "3. Get Categories",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/categories?city=Lucknow",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"categories"
-							],
-							"query": [
-								{
-									"key": "city",
-									"value": "Lucknow"
-								}
-							]
-						},
-						"description": "Returns all 14 beauty service categories (WAXING, FACIAL, MANI-PEDI, MAKE-UP, CLEAN-UP, etc.)."
-					},
-					"response": []
-				},
-				{
-					"name": "4. Get Services List (With Filters)",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/services?category=WAXING&city=Lucknow&page=1&limit=10",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"services"
-							],
-							"query": [
-								{
-									"key": "category",
-									"value": "WAXING"
-								},
-								{
-									"key": "city",
-									"value": "Lucknow"
-								},
-								{
-									"key": "search",
-									"value": "",
-									"disabled": true
-								},
-								{
-									"key": "page",
-									"value": "1"
-								},
-								{
-									"key": "limit",
-									"value": "10"
-								}
-							]
-						},
-						"description": "Fetch beauty services with pagination, category filter, city filter, and text search."
-					},
-					"response": []
-				},
-				{
-					"name": "5. Get Single Service by ID",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/services/2",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"services",
-								"2"
-							]
-						},
-						"description": "Fetch detailed information for a single service (price, duration, about, included items, expert qualities)."
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "3. Customer Addresses (Live)",
-			"item": [
-				{
-					"name": "1. Get User Saved Addresses",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{authToken}}"
-							}
-						],
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/user/addresses",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"user",
-								"addresses"
-							]
-						},
-						"description": "Get all doorstep delivery/service addresses saved by the logged-in customer."
-					},
-					"response": []
-				},
-				{
-					"name": "2. Add New Saved Address",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"var jsonData = pm.response.json();",
-									"if (jsonData.address && jsonData.address.id) {",
-									"    pm.collectionVariables.set('addressId', jsonData.address.id.toString());",
-									"    console.log('addressId saved:', jsonData.address.id);",
-									"}"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Authorization",
-								"value": "Bearer {{authToken}}"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"full_address\": \"Flat 402, Royal Palms, Gomti Nagar\",\n  \"city\": \"Lucknow\",\n  \"landmark\": \"Near City Mall\",\n  \"lat\": 26.8467,\n  \"lng\": 80.9462,\n  \"label\": \"Home\"\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/user/addresses",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"user",
-								"addresses"
-							]
-						},
-						"description": "Add a new doorstep address. Auto-saves returned ID to `{{addressId}}`."
-					},
-					"response": []
-				},
-				{
-					"name": "3. Update Saved Address",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Authorization",
-								"value": "Bearer {{authToken}}"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"full_address\": \"Flat 402, Royal Palms, Gomti Nagar, Phase 2\",\n  \"city\": \"Lucknow\",\n  \"landmark\": \"Opposite City Mall\",\n  \"lat\": 26.8467,\n  \"lng\": 80.9462,\n  \"label\": \"Home\"\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/user/addresses/{{addressId}}",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"user",
-								"addresses",
-								"{{addressId}}"
-							]
-						},
-						"description": "Update an existing saved address by ID."
-					},
-					"response": []
-				},
-				{
-					"name": "4. Delete Saved Address",
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{authToken}}"
-							}
-						],
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/user/addresses/{{addressId}}",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"user",
-								"addresses",
-								"{{addressId}}"
-							]
-						},
-						"description": "Delete a saved address by ID."
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "4. Bookings & Appointments (Live)",
-			"item": [
-				{
-					"name": "1. Check Available Time Slots",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/bookings/available-slots?date=2026-11-25&city=Lucknow",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"bookings",
-								"available-slots"
-							],
-							"query": [
-								{
-									"key": "date",
-									"value": "2026-11-25",
-									"description": "Date in YYYY-MM-DD"
-								},
-								{
-									"key": "city",
-									"value": "Lucknow",
-									"description": "Target city name"
-								}
-							]
-						},
-						"description": "Check available beautician time slots for chosen date and city."
-					},
-					"response": []
-				},
-				{
-					"name": "2. Apply Coupon Code",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"coupon_code\": \"FIRST ORDER\",\n  \"cart_total\": 1200,\n  \"city\": \"Lucknow\"\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/coupons/apply",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"coupons",
-								"apply"
-							]
-						},
-						"description": "Validates coupon from `vendor_coupons` table, checks minimum order amount, and calculates discount amount."
-					},
-					"response": []
-				},
-				{
-					"name": "3. Book Appointment",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"var jsonData = pm.response.json();",
-									"if (jsonData.booking && jsonData.booking.booking_id) {",
-									"    pm.collectionVariables.set('bookingId', jsonData.booking.booking_id);",
-									"    console.log('bookingId saved:', jsonData.booking.booking_id);",
-									"}"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Authorization",
-								"value": "Bearer {{authToken}}"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"address_id\": {{addressId}},\n  \"booking_date\": \"2026-11-25\",\n  \"booking_time\": \"11:00:00\",\n  \"services\": [\n    {\n      \"service_id\": 1,\n      \"quantity\": 1\n    },\n    {\n      \"service_id\": 2,\n      \"quantity\": 1\n    }\n  ],\n  \"coupon_code\": \"FIRST ORDER\",\n  \"payment_method\": \"Cash on Delivery\"\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/appointments",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"appointments"
-							]
-						},
-						"description": "Create a new doorstep salon appointment. Generates unique booking ID (`ORD-XXXXXX`) and 6-digit service OTP. Auto-saves `booking_id` to `{{bookingId}}`."
-					},
-					"response": []
-				},
-				{
-					"name": "4. Get My Appointments",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{authToken}}"
-							}
-						],
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/appointments?status=upcoming",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"appointments"
-							],
-							"query": [
-								{
-									"key": "status",
-									"value": "upcoming",
-									"description": "Filter by upcoming, completed, or cancelled (optional)"
-								}
-							]
-						},
-						"description": "List all appointments booked by the logged-in customer."
-					},
-					"response": []
-				},
-				{
-					"name": "5. Get Single Appointment Details",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{authToken}}"
-							}
-						],
-						"url": {
-							"raw": "{{baseUrl}}/api/v1/appointments/{{bookingId}}",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"appointments",
-								"{{bookingId}}"
-							]
-						},
-						"description": "Fetch detailed invoice and status for a specific booking by ID or `booking_id`."
-					},
-					"response": []
-				}
-			]
-		}
-	]
+  "info": {
+    "_postman_id": "b3e047f1-8f56-4cf7-9a88-nova-beauty-api-2026",
+    "name": "Nova Beauty API Collection",
+    "description": "Complete REST API collection for Nova Beauty On-Demand Home Salon & Doorstep Beauty Services.\n\nLive Base URL: `http://200.141.4.67`",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://200.141.4.67",
+      "type": "string"
+    },
+    {
+      "key": "authToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "addressId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "bookingId",
+      "value": "ORD-0171E4",
+      "type": "string"
+    },
+    {
+      "key": "productId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "cartItemId",
+      "value": "1",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "0. Health & System",
+      "item": [
+        {
+          "name": "API Root / Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                ""
+              ]
+            },
+            "description": "Returns basic API information, status, and version."
+          },
+          "response": []
+        },
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/health",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "health"
+              ]
+            },
+            "description": "Health check endpoint returning system status and timestamp."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "1. Authentication",
+      "item": [
+        {
+          "name": "Customer Register",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.token) {",
+                  "    pm.collectionVariables.set('authToken', jsonData.token);",
+                  "    console.log('authToken saved successfully:', jsonData.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Priya Sharma\",\n  \"email\": \"priya.sharma@example.com\",\n  \"phone\": \"9876543210\",\n  \"password\": \"Priya@123\",\n  \"city\": \"Lucknow\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "register"
+              ]
+            },
+            "description": "Register a new customer account. Returns user profile and JWT token (auto-saved in `authToken`)."
+          },
+          "response": []
+        },
+        {
+          "name": "Customer Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.token) {",
+                  "    pm.collectionVariables.set('authToken', jsonData.token);",
+                  "    console.log('authToken saved successfully:', jsonData.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"priya.sharma@example.com\",\n  \"password\": \"Priya@123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Login using email and password. Returns JWT token (auto-saved to `authToken`)."
+          },
+          "response": []
+        },
+        {
+          "name": "Customer Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/logout",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "logout"
+              ]
+            },
+            "description": "Logs out customer and instructs client to clear stored JWT."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Current User Profile (Me)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "me"
+              ]
+            },
+            "description": "Fetch current logged-in user profile, wallet balance, and status."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "2. Discovery & Catalog (Live)",
+      "item": [
+        {
+          "name": "1. Get Operational Cities",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/cities",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "cities"
+              ]
+            },
+            "description": "Returns list of all active serviceable cities (Lucknow, Ahmedabad, Bhind, Etawah, Meerut)."
+          },
+          "response": []
+        },
+        {
+          "name": "2. Get Promotional Banners",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/banners?city=Lucknow",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "banners"
+              ],
+              "query": [
+                {
+                  "key": "city",
+                  "value": "Lucknow"
+                }
+              ]
+            },
+            "description": "Returns active marketing and hero slider banners."
+          },
+          "response": []
+        },
+        {
+          "name": "3. Get Categories",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/categories?city=Lucknow",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "categories"
+              ],
+              "query": [
+                {
+                  "key": "city",
+                  "value": "Lucknow"
+                }
+              ]
+            },
+            "description": "Returns all 14 beauty service categories (WAXING, FACIAL, MANI-PEDI, MAKE-UP, CLEAN-UP, etc.)."
+          },
+          "response": []
+        },
+        {
+          "name": "4. Get Services List (With Filters)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/services?category=WAXING&city=Lucknow&page=1&limit=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "services"
+              ],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "WAXING"
+                },
+                {
+                  "key": "city",
+                  "value": "Lucknow"
+                },
+                {
+                  "key": "search",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Fetch beauty services with pagination, category filter, city filter, and text search."
+          },
+          "response": []
+        },
+        {
+          "name": "5. Get Single Service by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/services/2",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "services",
+                "2"
+              ]
+            },
+            "description": "Fetch detailed information for a single service (price, duration, about, included items, expert qualities)."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "3. Customer Addresses (Live)",
+      "item": [
+        {
+          "name": "1. Get User Saved Addresses",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/user/addresses",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "user",
+                "addresses"
+              ]
+            },
+            "description": "Get all doorstep delivery/service addresses saved by the logged-in customer."
+          },
+          "response": []
+        },
+        {
+          "name": "2. Add New Saved Address",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.address && jsonData.address.id) {",
+                  "    pm.collectionVariables.set('addressId', jsonData.address.id.toString());",
+                  "    console.log('addressId saved:', jsonData.address.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"full_address\": \"Flat 402, Royal Palms, Gomti Nagar\",\n  \"city\": \"Lucknow\",\n  \"landmark\": \"Near City Mall\",\n  \"lat\": 26.8467,\n  \"lng\": 80.9462,\n  \"label\": \"Home\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/user/addresses",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "user",
+                "addresses"
+              ]
+            },
+            "description": "Add a new doorstep address. Auto-saves returned ID to `{{addressId}}`."
+          },
+          "response": []
+        },
+        {
+          "name": "3. Update Saved Address",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"full_address\": \"Flat 402, Royal Palms, Gomti Nagar, Phase 2\",\n  \"city\": \"Lucknow\",\n  \"landmark\": \"Opposite City Mall\",\n  \"lat\": 26.8467,\n  \"lng\": 80.9462,\n  \"label\": \"Home\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/user/addresses/{{addressId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "user",
+                "addresses",
+                "{{addressId}}"
+              ]
+            },
+            "description": "Update an existing saved address by ID."
+          },
+          "response": []
+        },
+        {
+          "name": "4. Delete Saved Address",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/user/addresses/{{addressId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "user",
+                "addresses",
+                "{{addressId}}"
+              ]
+            },
+            "description": "Delete a saved address by ID."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "4. Bookings & Appointments (Live)",
+      "item": [
+        {
+          "name": "1. Check Available Time Slots",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/bookings/available-slots?date=2026-11-25&city=Lucknow",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "bookings",
+                "available-slots"
+              ],
+              "query": [
+                {
+                  "key": "date",
+                  "value": "2026-11-25",
+                  "description": "Date in YYYY-MM-DD"
+                },
+                {
+                  "key": "city",
+                  "value": "Lucknow",
+                  "description": "Target city name"
+                }
+              ]
+            },
+            "description": "Check available beautician time slots for chosen date and city."
+          },
+          "response": []
+        },
+        {
+          "name": "2. Apply Coupon Code",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"coupon_code\": \"FIRST ORDER\",\n  \"cart_total\": 1200,\n  \"city\": \"Lucknow\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/coupons/apply",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "coupons",
+                "apply"
+              ]
+            },
+            "description": "Validates coupon from `vendor_coupons` table, checks minimum order amount, and calculates discount amount."
+          },
+          "response": []
+        },
+        {
+          "name": "3. Book Appointment",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.booking && jsonData.booking.booking_id) {",
+                  "    pm.collectionVariables.set('bookingId', jsonData.booking.booking_id);",
+                  "    console.log('bookingId saved:', jsonData.booking.booking_id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"address_id\": {{addressId}},\n  \"booking_date\": \"2026-11-25\",\n  \"booking_time\": \"11:00:00\",\n  \"services\": [\n    {\n      \"service_id\": 1,\n      \"quantity\": 1\n    },\n    {\n      \"service_id\": 2,\n      \"quantity\": 1\n    }\n  ],\n  \"coupon_code\": \"FIRST ORDER\",\n  \"payment_method\": \"Cash on Delivery\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/appointments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "appointments"
+              ]
+            },
+            "description": "Create a new doorstep salon appointment. Generates unique booking ID (`ORD-XXXXXX`) and 6-digit service OTP. Auto-saves `booking_id` to `{{bookingId}}`."
+          },
+          "response": []
+        },
+        {
+          "name": "4. Get My Appointments",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/appointments?status=upcoming",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "appointments"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "upcoming",
+                  "description": "Filter by upcoming, completed, or cancelled (optional)"
+                }
+              ]
+            },
+            "description": "List all appointments booked by the logged-in customer."
+          },
+          "response": []
+        },
+        {
+          "name": "5. Get Single Appointment Details",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/appointments/{{bookingId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "appointments",
+                "{{bookingId}}"
+              ]
+            },
+            "description": "Fetch detailed invoice and status for a specific booking by ID or `booking_id`."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "4. Products (Shop / Retail)",
+      "item": [
+        {
+          "name": "1. Get All Products (Search & Pagination)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/products?search=&page=1&limit=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "products"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "",
+                  "description": "Search query by product name or description"
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number"
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Items per page"
+                }
+              ]
+            },
+            "description": "Fetch retail beauty products from inventory with search and pagination (active and shop=1)."
+          },
+          "response": []
+        },
+        {
+          "name": "2. Get Single Product by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/products/{{productId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "products",
+                "{{productId}}"
+              ]
+            },
+            "description": "Get product details by inventory ID."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "5. Cart Management",
+      "item": [
+        {
+          "name": "1. Get User Cart",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/cart",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "cart"
+              ]
+            },
+            "description": "Get current user cart with full details of added products and services, item count, and total cart value."
+          },
+          "response": []
+        },
+        {
+          "name": "2. Add Item to Cart (Product or Service)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"item_id\": 1,\n  \"item_type\": \"product\",\n  \"quantity\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/cart",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "cart"
+              ]
+            },
+            "description": "Add a product (item_type: \"product\") or service (item_type: \"service\") to customer cart. If item already exists, quantity is incremented."
+          },
+          "response": []
+        },
+        {
+          "name": "3. Update Cart Item Quantity",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quantity\": 2\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/cart/{{cartItemId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "cart",
+                "{{cartItemId}}"
+              ]
+            },
+            "description": "Update quantity of an item in the cart. If quantity is set to 0, the item is removed."
+          },
+          "response": []
+        },
+        {
+          "name": "4. Remove Item from Cart",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/cart/{{cartItemId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "cart",
+                "{{cartItemId}}"
+              ]
+            },
+            "description": "Delete a single item from the cart by its cart item ID."
+          },
+          "response": []
+        },
+        {
+          "name": "5. Clear Entire Cart",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/cart",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "cart"
+              ]
+            },
+            "description": "Clear all items from the current user cart."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
 }

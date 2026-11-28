@@ -6,6 +6,8 @@ import authRouter from "./modules/auth/auth.router.js";
 import catalogRouter from "./modules/catalog/catalog.router.js";
 import addressRouter from "./modules/address/address.router.js";
 import bookingRouter from "./modules/booking/booking.router.js";
+import productRouter from "./modules/product/product.router.js";
+import cartRouter from "./modules/cart/cart.router.js";
 
 const app = express();
 
@@ -41,8 +43,14 @@ app.use("/api/v1/auth", authRouter);
 // Catalog & Services Routes mount karein
 app.use("/api/v1", catalogRouter);
 
+// Products (Retail Shop) Routes mount karein
+app.use("/api/v1/products", productRouter);
+
 // Customer Saved Addresses Routes mount karein
 app.use("/api/v1/user/addresses", addressRouter);
+
+// Cart Routes mount karein
+app.use("/api/v1/cart", cartRouter);
 
 // Booking, Coupon & Appointment Routes mount karein
 app.use("/api/v1", bookingRouter);
